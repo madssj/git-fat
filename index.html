@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Git-fat by cyaninc</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/cyaninc/git-fat">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/cyaninc/git-fat/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/cyaninc/git-fat/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Git-fat</h1>
+          <p>Manage large binary files with git</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/cyaninc">cyaninc</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
+<a name="git-fat" class="anchor" href="#git-fat"><span class="octicon octicon-link"></span></a>git-fat</h1>
+
+<p>A tool for managing large binary files in git repositories.</p>
+
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>Checking large binary files into a distributed version control system is a bad idea because repository size quickly
+becomes unmanagable. Every operation takes longer to complete and fresh clones become something that you do start
+doing overnight. Binary files do not have clean diffs and as a result do not compress well. Using <code>git-fat</code> allows
+you to separate the storage of largefiles from the source while still having them in the working directory
+for your project.</p>
+
+<h2>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
+
+<ul>
+<li>Cloning the source code remains fast because binaries are not included</li>
+<li>Binary files really exist in your working directory and are not soft-links</li>
+<li>Only depends on Python 2.7, rsync and ssh</li>
+<li>Download only the files you need with pattern matching</li>
+<li>Supports anonymous downloads of files over http</li>
+</ul><h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>You can install <code>git-fat</code> using pip.</p>
+
+<pre><code>pip install git-fat
+</code></pre>
+
+<p>Or you can install it simply by placing it on your path.</p>
+
+<pre><code>curl https://raw.github.com/cyaninc/git-fat/master/git_fat/git_fat.py \
+| sudo tee /usr/local/bin/git-fat &amp;&amp; sudo chmod +x /usr/local/bin/git-fat
+</code></pre>
+
+<h2>
+<a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>First, create a <a href="http://git-scm.com/book/en/Customizing-Git-Git-Attributes"><code>.gitattributes</code></a> file in the
+root of your repository.  This file determines which files get converted to <code>git-fat</code> files.</p>
+
+<pre><code>cat &gt;&gt; .gitattributes &lt;&lt;EOF
+*.deb filter=fat -crlf
+*.gz filter=fat -crlf
+*.zip filter=fat -crlf
+EOF
+</code></pre>
+
+<p>Next, create a <code>.gitfat</code> configuration file in the root of your repo that contains the location of the
+remote store for the binary files. Optionally include the ssh user and port if non-standard. Also,
+optionally include an http remote for anonymous clones.</p>
+
+<pre><code>[rsync]
+remote = storage.example.com:/path/to/store
+user = git
+port = 2222
+[http]
+remote = http://storage.example.com/store
+</code></pre>
+
+<p>Commit those files so that others will be able to use them.</p>
+
+<p>Initalize the repository.  This adds a line to <code>.git/config</code> telling git what command to run for the <code>fat</code>
+filter is in the <code>.gitattributes</code> file.</p>
+
+<pre><code>git fat init
+</code></pre>
+
+<p>Now when you add a file that matches a pattern in the <code>.gitattributes</code> file, it will be converted to a fat placeholder
+file before getting commited to the repository. After you've added a file <strong>remember to push it to the fat store</strong>,
+otherwise people won't get the binary file when they try to pull fat-files.</p>
+
+<pre><code>git fat push
+</code></pre>
+
+<p>After we've done a new clone of a repository using <code>git-fat</code>, to get the additional files we do a fat pull.</p>
+
+<pre><code>git fat pull
+</code></pre>
+
+<p>Or if you're doing an anonymous pull, and the repository managers support it.</p>
+
+<pre><code>git fat pull-http
+</code></pre>
+
+<p>To list the files managed by <code>git-fat</code></p>
+
+<pre><code>git fat list
+</code></pre>
+
+<p>To get a summary of the orphan and stale files in the repository</p>
+
+<pre><code>git fat status
+</code></pre>
+
+<p>Orphans are files that exist as placeholders in the working copy.  Stale files are files that are in the
+<code>.git/fat/objects</code> directory, but have no working copy associated with them (e.g. old versions of files).</p>
+
+<h2>
+<a name="implementation-notes" class="anchor" href="#implementation-notes"><span class="octicon octicon-link"></span></a>Implementation notes</h2>
+
+<p>For many commands, <code>git-fat</code> by default only checks the current <code>HEAD</code> for placeholder files to clone. This can
+save on bandwidth for frequently changing large files and also saves on processing time for very large repositories.
+To force commands to search the entire history for placeholders and pull all files, call <code>git-fat</code> with <code>-a</code>. e.g.</p>
+
+<pre><code>git fat -a pull
+</code></pre>
+
+<p>If you add <code>git-fat</code> to an existing repository, the default behavior is to not convert existing binary files to
+<code>git-fat</code>. Converting a file that already exists in the history for git would not save any space. Once the file is
+changed or renamed, it will then be added to the fat store.</p>
+
+<p>To setup an http server to accept <code>git-fat</code> requests, just configure a webserver to have a url serve up the <code>git-fat</code>
+directory on the server, and point the <code>.gitfat</code> http remote to that url.</p>
+
+<h2>
+<a name="related-projects" class="anchor" href="#related-projects"><span class="octicon octicon-link"></span></a>Related projects</h2>
+
+<ul>
+<li>
+<a href="http://git-annex.branchable.com">git-annex</a> is a far more comprehensive solution, but was designed for a more
+distributed use case and has more dependencies.</li>
+<li>
+<a href="https://github.com/schacon/git-media">git-media</a> adopts a similar approach to <code>git-fat</code>, but with a different
+synchronization philosophy and with many Ruby dependencies.</li>
+</ul><h2>
+<a name="improvements" class="anchor" href="#improvements"><span class="octicon octicon-link"></span></a>Improvements</h2>
+
+<ul>
+<li>More friendly configuration for multiple fat remotes</li>
+<li>Private setting of a different remote.</li>
+</ul>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-46221113-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
