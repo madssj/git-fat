@@ -1,44 +1,37 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Git-fat by cyaninc</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Chivo:900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
     <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <title>Git-fat by cyaninc</title>
   </head>
+
   <body>
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/cyaninc/git-fat">View On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/cyaninc/git-fat/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/cyaninc/git-fat/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
+    <div id="container">
+      <div class="inner">
 
-    <div class="wrapper">
-
-      <section>
-        <div id="title">
+        <header>
           <h1>Git-fat</h1>
-          <p>Manage large binary files with git</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/cyaninc">cyaninc</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
-        </div>
+          <h2>Manage large binary files with git</h2>
+        </header>
 
-        <h1>
+        <section id="downloads" class="clearfix">
+          <a href="https://github.com/cyaninc/git-fat/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
+          <a href="https://github.com/cyaninc/git-fat/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
+          <a href="https://github.com/cyaninc/git-fat" id="view-on-github" class="button"><span>View on GitHub</span></a>
+        </section>
+
+        <hr>
+
+        <section id="main_content">
+          <h1>
 <a name="git-fat" class="anchor" href="#git-fat"><span class="octicon octicon-link"></span></a>git-fat</h1>
 
 <p>A tool for managing large binary files in git repositories.</p>
@@ -46,21 +39,24 @@
 <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p>Checking large binary files into a distributed version control system is a bad idea because repository size quickly
-becomes unmanagable. Every operation takes longer to complete and fresh clones become something that you do start
-doing overnight. Binary files do not have clean diffs and as a result do not compress well. Using <code>git-fat</code> allows
-you to separate the storage of largefiles from the source while still having them in the working directory
-for your project.</p>
+<p>Checking large binary files into a distributed version control system is
+a bad idea because repository size quickly becomes unmanagable. Every
+operation takes longer to complete and fresh clones become something
+that you do start doing overnight.
+Using <code>git-fat</code> allows you to separate the storage of largefiles from
+the source while still having them in the working directory for your project.</p>
 
 <h2>
 <a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h2>
 
 <ul>
-<li>Cloning the source code remains fast because binaries are not included</li>
-<li>Binary files really exist in your working directory and are not soft-links</li>
-<li>Only depends on Python 2.7, rsync and ssh</li>
-<li>Download only the files you need with pattern matching</li>
-<li>Supports anonymous downloads of files over http</li>
+<li> Cloning the source code remains fast because binaries are not
+included</li>
+<li> Binary files really exist in your working directory and are not
+soft-links</li>
+<li> Only depends on Python 2.7, rsync and ssh</li>
+<li> Download only the files you need with pattern matching</li>
+<li> Supports anonymous downloads of files over http</li>
 </ul><h2>
 <a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
 
@@ -78,8 +74,10 @@ for your project.</p>
 <h2>
 <a name="usage" class="anchor" href="#usage"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<p>First, create a <a href="http://git-scm.com/book/en/Customizing-Git-Git-Attributes"><code>.gitattributes</code></a> file in the
-root of your repository.  This file determines which files get converted to <code>git-fat</code> files.</p>
+<p>First, create a
+<a href="http://git-scm.com/book/en/Customizing-Git-Git-Attributes">git attributes</a>
+file in the root of your repository. This file determines which files
+get converted to <code>git-fat</code> files.</p>
 
 <pre><code>cat &gt;&gt; .gitattributes &lt;&lt;EOF
 *.deb filter=fat -crlf
@@ -88,8 +86,9 @@ root of your repository.  This file determines which files get converted to <cod
 EOF
 </code></pre>
 
-<p>Next, create a <code>.gitfat</code> configuration file in the root of your repo that contains the location of the
-remote store for the binary files. Optionally include the ssh user and port if non-standard. Also,
+<p>Next, create a <code>.gitfat</code> configuration file in the root of your repo
+that contains the location of the remote store for the binary files.
+Optionally include the ssh user and port if non-standard. Also,
 optionally include an http remote for anonymous clones.</p>
 
 <pre><code>[rsync]
@@ -102,25 +101,30 @@ remote = http://storage.example.com/store
 
 <p>Commit those files so that others will be able to use them.</p>
 
-<p>Initalize the repository.  This adds a line to <code>.git/config</code> telling git what command to run for the <code>fat</code>
-filter is in the <code>.gitattributes</code> file.</p>
+<p>Initalize the repository. This adds a line to <code>.git/config</code> telling
+git what command to run for the <code>fat</code> filter is in the
+<code>.gitattributes</code> file.</p>
 
 <pre><code>git fat init
 </code></pre>
 
-<p>Now when you add a file that matches a pattern in the <code>.gitattributes</code> file, it will be converted to a fat placeholder
-file before getting commited to the repository. After you've added a file <strong>remember to push it to the fat store</strong>,
-otherwise people won't get the binary file when they try to pull fat-files.</p>
+<p>Now when you add a file that matches a pattern in the <code>.gitattributes</code>
+file, it will be converted to a fat placeholder file before getting
+commited to the repository. After you've added a file <strong>remember to push
+it to the fat store</strong>, otherwise people won't get the binary file when
+they try to pull fat-files.</p>
 
 <pre><code>git fat push
 </code></pre>
 
-<p>After we've done a new clone of a repository using <code>git-fat</code>, to get the additional files we do a fat pull.</p>
+<p>After we've done a new clone of a repository using <code>git-fat</code>, to get
+the additional files we do a fat pull.</p>
 
 <pre><code>git fat pull
 </code></pre>
 
-<p>Or if you're doing an anonymous pull, and the repository managers support it.</p>
+<p>Or if you're doing an anonymous pull, and the repository managers
+support it.</p>
 
 <pre><code>git fat pull-http
 </code></pre>
@@ -135,48 +139,147 @@ otherwise people won't get the binary file when they try to pull fat-files.</p>
 <pre><code>git fat status
 </code></pre>
 
-<p>Orphans are files that exist as placeholders in the working copy.  Stale files are files that are in the
-<code>.git/fat/objects</code> directory, but have no working copy associated with them (e.g. old versions of files).</p>
+<p>Orphans are files that exist as placeholders in the working copy. Stale
+files are files that are in the <code>.git/fat/objects</code> directory, but have
+no working copy associated with them (e.g. old versions of files).</p>
+
+<p>To find files over a certain size, use git fat find. This example finds
+all objects greater than 10MB in git's database and prints them out.</p>
+
+<pre><code>git fat find 10485760
+</code></pre>
 
 <h2>
 <a name="implementation-notes" class="anchor" href="#implementation-notes"><span class="octicon octicon-link"></span></a>Implementation notes</h2>
 
-<p>For many commands, <code>git-fat</code> by default only checks the current <code>HEAD</code> for placeholder files to clone. This can
-save on bandwidth for frequently changing large files and also saves on processing time for very large repositories.
-To force commands to search the entire history for placeholders and pull all files, call <code>git-fat</code> with <code>-a</code>. e.g.</p>
+<p>For many commands, <code>git-fat</code> by default only checks the current
+<code>HEAD</code> for placeholder files to clone. This can save on bandwidth for
+frequently changing large files and also saves on processing time for
+very large repositories. To force commands to search the entire history
+for placeholders and pull all files, call <code>git-fat</code> with <code>-a</code>. e.g.</p>
 
 <pre><code>git fat -a pull
 </code></pre>
 
-<p>If you add <code>git-fat</code> to an existing repository, the default behavior is to not convert existing binary files to
-<code>git-fat</code>. Converting a file that already exists in the history for git would not save any space. Once the file is
-changed or renamed, it will then be added to the fat store.</p>
+<p>If you add <code>git-fat</code> to an existing repository, the default behavior
+is to not convert existing binary files to <code>git-fat</code>. Converting a
+file that already exists in the history for git would not save any
+space. Once the file is changed or renamed, it will then be added to the
+fat store.</p>
 
-<p>To setup an http server to accept <code>git-fat</code> requests, just configure a webserver to have a url serve up the <code>git-fat</code>
-directory on the server, and point the <code>.gitfat</code> http remote to that url.</p>
+<p>To setup an http server to accept <code>git-fat</code> requests, just configure a
+webserver to have a url serve up the <code>git-fat</code> directory on the
+server, and point the <code>.gitfat</code> http remote to that url.</p>
+
+<h2>
+<a name="retroactive-import" class="anchor" href="#retroactive-import"><span class="octicon octicon-link"></span></a>Retroactive Import</h2>
+
+<p>You can retroactively import a repository to <code>git-fat</code> using a combination
+of <code>find</code> and <code>index-filter</code> used with git's <code>filter-branch</code> command.</p>
+
+<p>Before you do this, make sure you understand the consequences of
+<a href="http://git-scm.com/book/ch6-4.html">rewriting history</a> and be sure to
+backup your repository before starting.</p>
+
+<p>First, clone the repository and find all the large files with the
+<code>git fat find</code> command.</p>
+
+<pre><code>darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ git fat find 5123123
+761a63bf287867da92eb420fca515363c4b02ad1 9437184 flowerpot.tar.gz
+6c5d4031e03408e34ae476c5053ee497a91ac37b 10485760 whale.tar.gz
+</code></pre>
+
+<p>Review the files and make sure that they're what you want to exclude from the
+repository.  If the list looks good, put the filenames into another file that
+will be read from during <code>filter-branch</code>.</p>
+
+<pre><code>darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ git fat find 5123123 | cut -d' ' -f3- &gt; /tmp/towel
+
+darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ cat /tmp/towel
+flowerpot.tar.gz
+whale.tar.gz
+
+darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ ll
+total 19M
+drwxrwxr-x 3 darthurdent darthurdent 4.0K Dec 10 13:42 .
+drwxrwxrwt 6 root         root          76K Dec 10 13:42 ..
+drwxrwxr-x 6 darthurdent darthurdent 4.0K Dec 10 13:42 .git
+-rw-r--r-- 1 darthurdent darthurdent 9.0M Dec 10 13:37 flowerpot.tar.gz
+-rw-r--r-- 1 darthurdent darthurdent  10M Dec 10 13:37 whale.tar.gz
+</code></pre>
+
+<p>Do the <code>filter-branch</code> using <code>git fat index-filter</code> as the index filter.
+Pass in the filename containing the paths to files you want to exclude.</p>
+
+<pre><code>darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ git filter-branch --index-filter 'git fat index-filter /tmp/towel'\
+    --tag-name-filter cat -- --all
+Rewrite 28cfba441aac92992c3f80dae97cd1c19b3befad (2/2)
+Ref 'refs/heads/master' was rewritten
+</code></pre>
+
+<p>Review the changes made to the repository.</p>
+
+<pre><code>darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ ll
+total 19M
+drwxrwxr-x 3 darthurdent darthurdent 4.0K Dec 10 13:42 .
+drwxrwxrwt 6 root         root          76K Dec 10 13:42 ..
+drwxrwxr-x 6 darthurdent darthurdent 4.0K Dec 10 13:42 .git
+-rw-rw-r-- 1 darthurdent darthurdent   64 Dec 10 13:42 .gitattributes
+-rw-rw-r-- 1 darthurdent darthurdent 9.0M Dec 10 13:42 flowerpot.tar.gz
+-rw-rw-r-- 1 darthurdent darthurdent  10M Dec 10 13:42 whale.tar.gz
+
+darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ cat .gitattributes
+flowerpot.tar.gz filter=fat -text
+whale.tar.gz filter=fat -text
+
+darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ git cat-file -p $(git hash-object whale.tar.gz)
+#$# git-fat 8c206a1a87599f532ce68675536f0b1546900d7a             10485760
+</code></pre>
+
+<p>Remove all the old and dangling references by doing a clone of the repository
+you just cleaned.  The <code>file://</code> uri is
+<a href="http://git-scm.com/book/ch4-1.html">important</a> here.</p>
+
+<pre><code>darthurdent at betelgeuse in /tmp/git-fat-demo (master)
+$ cd .. &amp;&amp; git clone file://git-fat-demo git-fat-clean
+</code></pre>
 
 <h2>
 <a name="related-projects" class="anchor" href="#related-projects"><span class="octicon octicon-link"></span></a>Related projects</h2>
 
 <ul>
-<li>
-<a href="http://git-annex.branchable.com">git-annex</a> is a far more comprehensive solution, but was designed for a more
-distributed use case and has more dependencies.</li>
-<li>
-<a href="https://github.com/schacon/git-media">git-media</a> adopts a similar approach to <code>git-fat</code>, but with a different
-synchronization philosophy and with many Ruby dependencies.</li>
+<li> <a href="http://git-annex.branchable.com">git-annex</a> is a far more
+comprehensive solution, but was designed for a more distributed use
+case and has more dependencies.</li>
+<li> <a href="https://github.com/schacon/git-media">git-media</a> adopts a similar
+approach to <code>git-fat</code>, but with a different synchronization
+philosophy and with many Ruby dependencies.</li>
 </ul><h2>
 <a name="improvements" class="anchor" href="#improvements"><span class="octicon octicon-link"></span></a>Improvements</h2>
 
 <ul>
-<li>More friendly configuration for multiple fat remotes</li>
-<li>Private setting of a different remote.</li>
+<li> More friendly configuration for multiple fat remotes</li>
+<li> Private setting of a different remote. (e.g. local mirrors)</li>
+<li> Generic backend interface</li>
+<li> Better Documentation</li>
+<li> Improved Testing</li>
 </ul>
-      </section>
+        </section>
 
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-              <script type="text/javascript">
+        <footer>
+          Git-fat is maintained by <a href="https://github.com/cyaninc">cyaninc</a><br>
+          This page was generated by <a href="http://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
+        </footer>
+
+                  <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
           </script>
@@ -187,5 +290,7 @@ synchronization philosophy and with many Ruby dependencies.</li>
             } catch(err) {}
           </script>
 
+      </div>
+    </div>
   </body>
 </html>
