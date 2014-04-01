@@ -70,6 +70,16 @@ optionally include an http remote for anonymous clones.
     [http]
     remote = http://storage.example.com/store
 
+Or, to use the S3 backend (requires the boto module), add the following 
+to your ``.gitfat``.
+
+::
+    
+    [s3]
+    bucket={bucketname}
+    key={access_key_id}
+    secret={secret_access_key}
+    
 Commit those files so that others will be able to use them.
 
 Initalize the repository. This adds a line to ``.git/config`` telling
