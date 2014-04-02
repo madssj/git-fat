@@ -237,15 +237,20 @@ class GitFat(object):
             error('ERROR: No s3.bucket in {0}'.format(self.cfgpath))
             sys.exit(1)
 
-        connection_kwargs = {}
+        extra = {}
 
         # https://github.com/boto/boto/issues/621
         host = gitconfig_get('s3.host', file=self.cfgpath)
 
         if host:
-            connection_kwargs['host'] = host
+            extra['host'] = host
 
-        return key, secret, bucket, connection_kwargs
+        public = gitconfig_get('s3.public', file=self.cfgpath)
+
+        if public:
+            extra['public'] = public
+
+        return key, secret, bucket, extra
 
     def _rsync(self, push):
         '''
@@ -767,7 +772,7 @@ class GitFat(object):
         pass
 
     def _s3_get_bucket(self):
-        access_key_id, secret_access_key, bucket, kwargs = self._s3_opts()
+        access_key_id, secret_access_key, bucket, extra = self._s3_opts()
 
         try:
             import boto
@@ -776,8 +781,7 @@ class GitFat(object):
             raise
 
         conn = boto.connect_s3(
-            access_key_id, secret_access_key,
-            **kwargs
+            access_key_id, secret_access_key, host=extra.get('host')
         )
 
         return conn.get_bucket(bucket)
@@ -832,9 +836,9 @@ class GitFat(object):
         '''
         Push all files which have changed.
         '''
-        public_cfg = gitconfig_get('s3.public').lower()
-        public_files = public_cfg.startswith('t')
-        public_files = public_files or public_cfg.startswith('y')
+        _, _, _, extra = self._s3_opts()
+
+        public_files = extra.get('public', '').lower().startswith('t')
 
         def has_changed(localfile, key):
             h = hashlib.md5()
@@ -940,11 +944,11 @@ def main():
         help='anonymously download git-fat files over http')
     parser_list.set_defaults(func=fat.http_pull)
 
-    parser_list = subparser.add_parser('pull-s3',
+    parser_list = subparser.add_parser('s3-pull',
         help='download git-fat files using s3')
     parser_list.set_defaults(func=fat.s3_pull)
 
-    parser_list = subparser.add_parser('push-s3',
+    parser_list = subparser.add_parser('s3-push',
         help='push cache to amazon s3 remote')
     parser_list.set_defaults(func=fat.s3_push)
 
